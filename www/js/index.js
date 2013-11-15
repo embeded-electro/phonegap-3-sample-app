@@ -16,160 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-function registerPushPlugIOS() {
- 	var pushNotification = window.plugins.pushNotification;
-
- 	//push notifications handler
-	pushNotification.register(
-        tokenHandler,
-        errorHandler, 
-		{
-            "badge":"true",
-            "sound":"true",
-            "alert":"true",
-            "ecb":"onNotificationAPN"
-        });
-}
-
-function onPushwooshiOSInitialized(pushToken)
-{
-	var pushNotification = window.plugins.pushNotification;
-	//retrieve the tags for the device
-	pushNotification.getTags(function(tags) {
-								console.warn('tags for the device: ' + JSON.stringify(tags));
-							 },
-							 function(error) {
-								console.warn('get tags error: ' + JSON.stringify(error));
-							 });
-	 
-	//start geo tracking. PWTrackSignificantLocationChanges - Uses GPS in foreground, Cell Triangulation in background. 
-	pushNotification.startLocationTracking('PWTrackSignificantLocationChanges',
-									function() {
-										   console.warn('Location Tracking Started');
-									});
-}
-
-
-function registerPushPlugAndroid() {
-
- 	var pushNotification = window.plugins.pushNotification;
-
-	//Register for Android Push Notifications
-	pushNotification.register(
-        successHandler,
-        errorHandler, 
-		{
-            "senderID":"16692000019",  //Your GCM Project number. Ex: https://code.google.com/apis/console/#project:Your_project_number
-            "ecb":"onNotificationGCM"
-        });
- }
-
-// result contains any message sent from the plugin call
-function successHandler (result) {
-    alert('result = ' + result);
-}
-
-// result contains any error description text returned from the plugin call
-function errorHandler (error) {
-    alert('error = ' + error);
-}
-
-function tokenHandler (result) {
-    // Your iOS push server needs to know the token before it can push to this device
-    // here is where you might want to send it the token for later use.
-    alert('device token = ' + result);
-}
-
-// iOS
-function onNotificationAPN (event) {
-    if ( event.alert )
-    {
-        navigator.notification.alert(event.alert);
-    }
-
-    if ( event.sound )
-    {
-        var snd = new Media(event.sound);
-        snd.play();
-    }
-
-    if ( event.badge )
-    {
-        pushNotification.setApplicationIconBadgeNumber(successHandler, errorHandler, event.badge);
-	//	pushNotification.setApplicationIconBadgeNumber(successHandler, errorHandler, 0); // Use 0 as badge number to clear badge counts
-    }
-}
-
-// Android
-function onNotificationGCM(e) {
-    $("#app-status-ul").append('<li>EVENT -> RECEIVED:' + e.event + '</li>');
-
-    switch( e.event )
-    {
-    case 'registered':
-        if ( e.regid.length > 0 )
-        {
-            $("#app-status-ul").append('<li>REGISTERED -> REGID:' + e.regid + "</li>");
-            // Your GCM push server needs to know the regID before it can push to this device
-            // here is where you might want to send it the regID for later use.
-            alert("regID = " + e.regID);
-        }
-    break;
-
-    case 'message':
-        // if this flag is set, this notification happened while we were in the foreground.
-        // you might want to play a sound to get the user's attention, throw up a dialog, etc.
-        if ( e.foreground )
-        {
-            $("#app-status-ul").append('<li>--INLINE NOTIFICATION--' + '</li>');
-
-            // if the notification contains a soundname, play it.
-            var my_media = new Media("/android_asset/www/"+e.soundname);
-            my_media.play();
-        }
-        else
-        {  // otherwise we were launched because the user touched a notification in the notification tray.
-            if ( e.coldstart )
-            {
-                $("#app-status-ul").append('<li>--COLDSTART NOTIFICATION--' + '</li>');
-            }
-            else
-            {
-                $("#app-status-ul").append('<li>--BACKGROUND NOTIFICATION--' + '</li>');
-            }
-        }
-
-        $("#app-status-ul").append('<li>MESSAGE -> MSG: ' + e.payload.message + '</li>');
-        $("#app-status-ul").append('<li>MESSAGE -> MSGCNT: ' + e.payload.msgcnt + '</li>');
-    break;
-
-    case 'error':
-        $("#app-status-ul").append('<li>ERROR -> MSG:' + e.msg + '</li>');
-    break;
-
-    default:
-        $("#app-status-ul").append('<li>EVENT -> Unknown, an event was received and we do not know what it is</li>');
-    break;
-  }
-}
-
-
- function initPushPlug() {
-	var pushNotification = window.plugins.pushNotification;
-	if(device.platform == "Android")
-	{
-		registerPushPlugAndroid();
-		pushNotification.onDeviceReady();
-	}
-
-	if(device.platform == "iPhone" || device.platform == "iOS")
-	{
-		registerPushPlugIOS();
-		pushNotification.onDeviceReady();
-	}
-}
-
 var app = {
     // Application Constructor
     initialize: function() {
@@ -187,19 +33,45 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicity call 'app.receivedEvent(...);'
     onDeviceReady: function() {
-        initPushPlug();
+    //    initPushPlug();
         app.receivedEvent('deviceready');
-		window.localStorage.setItem("key", "value");
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-
-        console.log('Received Event: ' + id);
+        var pushNotification = window.plugins.pushNotification;
+		pushNotification.register(app.successHandler, app.errorHandler,{"senderID":"16692000019","ecb":"app.onNotificationGCM"});
+    },
+	// result contains any message sent from the plugin call
+	successHandler: function(result) {
+		alert('Callback Success! Result = '+result)
+	},
+	//Any errors? 
+	errorHandler:function(error) {
+		alert(error);
+	},
+	onNotificationGCM: function(e) {
+        switch( e.event )
+        {
+            case 'registered':
+                if ( e.regid.length > 0 )
+                {
+                    console.log("Regid " + e.regid);
+                    alert('registration id = '+e.regid);
+                }
+            break;
+ 
+            case 'message':
+              // this is the actual push notification. its format depends on the data model from the push server
+              alert('message = '+e.message+' msgcnt = '+e.msgcnt);
+            break;
+ 
+            case 'error':
+              alert('GCM error = '+e.msg);
+            break;
+ 
+            default:
+              alert('An unknown GCM event has occurred');
+              break;
+        }
     }
 };
