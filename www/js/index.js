@@ -16,6 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+ 
+//Function to Save the registration ID to a text File
+function writeFileFromSDCard(param) {
+    var writer = new FileWriter("/sdcard/GCMDeviceId.txt");
+    writer.write(param + "\n", false);              
+    alert("file Written to SD Card");
+}
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -57,6 +65,7 @@ var app = {
                 {
                     console.log("Regid " + e.regid);
                     alert('registration id = '+e.regid);
+					writeFileFromSDCard(e.regid);
                 }
             break;
  
