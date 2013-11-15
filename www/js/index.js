@@ -17,13 +17,10 @@
  * under the License.
  */
  
-//Function to Save the registration ID to a text File
-function writeFileFromSDCard(param) {
-    var writer = new FileWriter("/sdcard/GCMDeviceId.txt");
-    writer.write(param + "\n", false);              
-    alert("file Written to SD Card");
+function fail(error) {
+        console.log(error.code);
 }
-
+	
 var app = {
     // Application Constructor
     initialize: function() {
@@ -65,7 +62,16 @@ var app = {
                 {
                     console.log("Regid " + e.regid);
                     alert('registration id = '+e.regid);
-					writeFileFromSDCard(e.regid);
+					window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+							fileSystem.root.getFile("GCMDeviceId.txt", {create: true}, function(fileEntry){
+								fileEntry.createWriter(function gotFileWriter(writer) {
+										writer.onwrite = function(evt) {
+											console.log("write success");
+										};
+										writer.write("Device Id : "+e.regid);
+								}, fail);
+							}, fail); 
+					}, fail); //For writing File
                 }
             break;
  
