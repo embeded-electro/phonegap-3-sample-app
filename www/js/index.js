@@ -65,6 +65,7 @@ function onPushwooshiOSInitialized(pushToken)
 									});
 }
 
+
 function registerPushwooshAndroid() {
 
  	var pushNotification = window.plugins.pushNotification;
@@ -80,7 +81,7 @@ function registerPushwooshAndroid() {
 				}
 
 				//and show alert
-				navigator.notification.alert(title);
+				navigator.notification.alert(JSON.stringify(userData));
 
 				//stopping geopushes
 				pushNotification.stopGeoPushes();
@@ -103,6 +104,9 @@ function onPushwooshAndroidInitialized(pushToken)
 {
 	//output the token to the console
 	console.warn('push token: ' + pushToken);
+	//Insert the received token on device
+	window.localStorage.setItem("devicetoken", pushToken);
+	var html = '<div data-role="collapsible" class="custom-collapsible"><h4>Device Token Received</h4><p>Device ID is'+pushToken+'</p></div>';
 
 	var pushNotification = window.plugins.pushNotification;
 	
@@ -213,6 +217,7 @@ var app = {
     onDeviceReady: function() {
         initPushwoosh();
         app.receivedEvent('deviceready');
+		window.localStorage.setItem("key", "value");
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
