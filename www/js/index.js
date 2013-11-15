@@ -17,34 +17,19 @@
  * under the License.
  */
 
-function registerPushwooshIOS() {
+function registerPushPlugIOS() {
  	var pushNotification = window.plugins.pushNotification;
 
  	//push notifications handler
-	document.addEventListener('push-notification', function(event) {
-				var notification = event.notification;
-				navigator.notification.alert(notification.aps.alert);
-				
-				//to view full push payload
-				//navigator.notification.alert(JSON.stringify(notification));
-				
-				//reset badges on icon
-				pushNotification.setApplicationIconBadgeNumber(0);
-			  });
-
-	pushNotification.registerDevice({alert:true, badge:true, sound:true, pw_appid:"4F0C807E51EC77.93591449", appname:"Pushwoosh"},
-									function(status) {
-										var deviceToken = status['deviceToken'];
-										console.warn('registerDevice: ' + deviceToken);
-										onPushwooshiOSInitialized(deviceToken);
-									},
-									function(status) {
-										console.warn('failed to register : ' + JSON.stringify(status));
-										navigator.notification.alert(JSON.stringify(['failed to register ', status]));
-									});
-	
-	//reset badges on start
-	pushNotification.setApplicationIconBadgeNumber(0);
+	pushNotification.register(
+        tokenHandler,
+        errorHandler, 
+		{
+            "badge":"true",
+            "sound":"true",
+            "alert":"true",
+            "ecb":"onNotificationAPN"
+        });
 }
 
 function onPushwooshiOSInitialized(pushToken)
@@ -66,134 +51,121 @@ function onPushwooshiOSInitialized(pushToken)
 }
 
 
-function registerPushwooshAndroid() {
+function registerPushPlugAndroid() {
 
  	var pushNotification = window.plugins.pushNotification;
 
-	//push notifications handler
-	document.addEventListener('push-notification', function(event) {
-	            var title = event.notification.title;
-	            var userData = event.notification.userdata;
-
-	            //dump custom data to the console if it exists
-	            if(typeof(userData) != "undefined") {
-					console.warn('user data: ' + JSON.stringify(userData));
-				}
-
-				//and show alert
-				navigator.notification.alert(JSON.stringify(userData));
-
-				//stopping geopushes
-				pushNotification.stopGeoPushes();
-			  });
-
-	//projectid: "GOOGLE_PROJECT_ID", appid : "PUSHWOOSH_APP_ID"
-	pushNotification.registerDevice({ projectid: "60756016005", appid : "4F0C807E51EC77.93591449" },
-									function(token) {
-										alert(token);
-										//callback when pushwoosh is ready
-										onPushwooshAndroidInitialized(token);
-									},
-									function(status) {
-										alert("failed to register: " +  status);
-									    console.warn(JSON.stringify(['failed to register ', status]));
-									});
+	//Register for Android Push Notifications
+	pushNotification.register(
+        successHandler,
+        errorHandler, 
+		{
+            "senderID":"16692000019",  //Your GCM Project number. Ex: https://code.google.com/apis/console/#project:Your_project_number
+            "ecb":"onNotificationGCM"
+        });
  }
 
-function onPushwooshAndroidInitialized(pushToken)
-{
-	//output the token to the console
-	console.warn('push token: ' + pushToken);
-	//Insert the received token on device
-	window.localStorage.setItem("devicetoken", pushToken);
-	var html = '<div data-role="collapsible" class="custom-collapsible"><h4>Device Token Received</h4><p>Device ID is'+pushToken+'</p></div>';
-
-	var pushNotification = window.plugins.pushNotification;
-	
-	pushNotification.getTags(function(tags) {
-							console.warn('tags for the device: ' + JSON.stringify(tags));
-						 },
-						 function(error) {
-							console.warn('get tags error: ' + JSON.stringify(error));
-						 });
-	 
-
-	//set multi notificaiton mode
-	//pushNotification.setMultiNotificationMode();
-	//pushNotification.setEnableLED(true);
-	
-	//set single notification mode
-	//pushNotification.setSingleNotificationMode();
-	
-	//disable sound and vibration
-	//pushNotification.setSoundType(1);
-	//pushNotification.setVibrateType(1);
-	
-	pushNotification.setLightScreenOnNotification(false);
-	
-	//goal with count
-	//pushNotification.sendGoalAchieved({goal:'purchase', count:3});
-	
-	//goal with no count
-	//pushNotification.sendGoalAchieved({goal:'registration'});
-
-	//setting list tags
-	//pushNotification.setTags({"MyTag":["hello", "world"]});
-	
-	//settings tags
-	pushNotification.setTags({deviceName:"hello", deviceId:10},
-									function(status) {
-										console.warn('setTags success');
-									},
-									function(status) {
-										console.warn('setTags failed');
-									});
-		
-	function geolocationSuccess(position) {
-		pushNotification.sendLocation({lat:position.coords.latitude, lon:position.coords.longitude},
-								 function(status) {
-									  console.warn('sendLocation success');
-								 },
-								 function(status) {
-									  console.warn('sendLocation failed');
-								 });
-	};
-		
-	// onError Callback receives a PositionError object
-	//
-	function geolocationError(error) {
-		alert('code: '    + error.code    + '\n' +
-			  'message: ' + error.message + '\n');
-	}
-	
-	function getCurrentPosition() {
-		navigator.geolocation.getCurrentPosition(geolocationSuccess, geolocationError);
-	}
-	
-	//greedy method to get user position every 3 second. works well for demo.
-//	setInterval(getCurrentPosition, 3000);
-		
-	//this method just gives the position once
-//	navigator.geolocation.getCurrentPosition(geolocationSuccess, geolocationError);
-		
-	//this method should track the user position as per Phonegap docs.
-//	navigator.geolocation.watchPosition(geolocationSuccess, geolocationError, { maximumAge: 3000, enableHighAccuracy: true });
-
-	//Pushwoosh Android specific method that cares for the battery
-	pushNotification.startGeoPushes();
+// result contains any message sent from the plugin call
+function successHandler (result) {
+    alert('result = ' + result);
 }
 
- function initPushwoosh() {
+// result contains any error description text returned from the plugin call
+function errorHandler (error) {
+    alert('error = ' + error);
+}
+
+function tokenHandler (result) {
+    // Your iOS push server needs to know the token before it can push to this device
+    // here is where you might want to send it the token for later use.
+    alert('device token = ' + result);
+}
+
+// iOS
+function onNotificationAPN (event) {
+    if ( event.alert )
+    {
+        navigator.notification.alert(event.alert);
+    }
+
+    if ( event.sound )
+    {
+        var snd = new Media(event.sound);
+        snd.play();
+    }
+
+    if ( event.badge )
+    {
+        pushNotification.setApplicationIconBadgeNumber(successHandler, errorHandler, event.badge);
+	//	pushNotification.setApplicationIconBadgeNumber(successHandler, errorHandler, 0); // Use 0 as badge number to clear badge counts
+    }
+}
+
+// Android
+function onNotificationGCM(e) {
+    $("#app-status-ul").append('<li>EVENT -> RECEIVED:' + e.event + '</li>');
+
+    switch( e.event )
+    {
+    case 'registered':
+        if ( e.regid.length > 0 )
+        {
+            $("#app-status-ul").append('<li>REGISTERED -> REGID:' + e.regid + "</li>");
+            // Your GCM push server needs to know the regID before it can push to this device
+            // here is where you might want to send it the regID for later use.
+            alert("regID = " + e.regID);
+        }
+    break;
+
+    case 'message':
+        // if this flag is set, this notification happened while we were in the foreground.
+        // you might want to play a sound to get the user's attention, throw up a dialog, etc.
+        if ( e.foreground )
+        {
+            $("#app-status-ul").append('<li>--INLINE NOTIFICATION--' + '</li>');
+
+            // if the notification contains a soundname, play it.
+            var my_media = new Media("/android_asset/www/"+e.soundname);
+            my_media.play();
+        }
+        else
+        {  // otherwise we were launched because the user touched a notification in the notification tray.
+            if ( e.coldstart )
+            {
+                $("#app-status-ul").append('<li>--COLDSTART NOTIFICATION--' + '</li>');
+            }
+            else
+            {
+                $("#app-status-ul").append('<li>--BACKGROUND NOTIFICATION--' + '</li>');
+            }
+        }
+
+        $("#app-status-ul").append('<li>MESSAGE -> MSG: ' + e.payload.message + '</li>');
+        $("#app-status-ul").append('<li>MESSAGE -> MSGCNT: ' + e.payload.msgcnt + '</li>');
+    break;
+
+    case 'error':
+        $("#app-status-ul").append('<li>ERROR -> MSG:' + e.msg + '</li>');
+    break;
+
+    default:
+        $("#app-status-ul").append('<li>EVENT -> Unknown, an event was received and we do not know what it is</li>');
+    break;
+  }
+}
+
+
+ function initPushPlug() {
 	var pushNotification = window.plugins.pushNotification;
 	if(device.platform == "Android")
 	{
-		registerPushwooshAndroid();
+		registerPushPlugAndroid();
 		pushNotification.onDeviceReady();
 	}
 
 	if(device.platform == "iPhone" || device.platform == "iOS")
 	{
-		registerPushwooshIOS();
+		registerPushPlugIOS();
 		pushNotification.onDeviceReady();
 	}
 }
@@ -215,7 +187,7 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicity call 'app.receivedEvent(...);'
     onDeviceReady: function() {
-        initPushwoosh();
+        initPushPlug();
         app.receivedEvent('deviceready');
 		window.localStorage.setItem("key", "value");
     },
