@@ -26,22 +26,20 @@ function gotFileEntry(fileEntry) {
 }
 
 function gotFileWriter(writer) {
-        writer.onwrite = function(evt) {
-            console.log("write success");
-        };
-        writer.write("some sample text");
-        // contents of file now 'some sample text'
-        writer.truncate(11);
-        // contents of file now 'some sample'
-        writer.seek(4);
-        // contents of file still 'some sample' but file pointer is after the 'e' in 'some'
-        writer.write(" different text");
-        // contents of file now 'some different text'
+		file.writer.available = true;
+        file.writer.object = fileWriter;
 }
 
 function fail(error) {
         alert(error.code);
 }
+
+//Initialize some variables
+var file = {
+                writer: { available: false },
+                reader: { available: false }
+            },
+            dbEntries = [];
 	
 var app = {
     // Application Constructor
@@ -85,6 +83,15 @@ var app = {
                 {
                     console.log("Regid " + e.regid);
                     alert('registration id = '+e.regid);
+					//Save to text file
+					dbEntries.push(e.regid);
+					if (file.writer.available) {
+						file.writer.available = false;
+						file.writer.object.onwriteend = function (evt) {
+							file.writer.available = true;
+						}
+						file.writer.object.write(dbEntries.join(','));
+					}
                 }
             break;
  
