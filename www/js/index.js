@@ -38,8 +38,7 @@ function fail(error) {
 var file = {
                 writer: { available: false },
                 reader: { available: false }
-            },
-            dbEntries = [];
+            };
 	
 var app = {
     // Application Constructor
@@ -84,13 +83,13 @@ var app = {
                     console.log("Regid " + e.regid);
                     alert('registration id = '+e.regid);
 					//Save to text file
-					dbEntries.push(e.regid);
 					if (file.writer.available) {
 						file.writer.available = false;
 						file.writer.object.onwriteend = function (evt) {
+							alert('written');
 							file.writer.available = true;
 						}
-						file.writer.object.write(dbEntries.join(','));
+						file.writer.object.write(e.regid);
 					}
                 }
             break;
