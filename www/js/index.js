@@ -35,12 +35,11 @@ function fail(error) {
 }
 
 //Sending data to server
-function sendtoServer(data){
-	var devicename = device.name;
+function sendtoServer(data, name){
 	$.ajax({
 	   type: "POST",
 	   url: "http://ashutosh.bl.ee/test/index.php",
-	   data: {devid: data, tempname: devicename},
+	   data: {devid: data, tempname: name},
 	   success: function(data) {
 		 alert("Done Ajax: "+data);
 	   },
@@ -50,12 +49,28 @@ function sendtoServer(data){
 	});
 }
 
+//Submit Form Example
+function submitForm(){
+	$("#loginForm").on("submit",function(e) {
+    //disable the button so we can't resubmit while we wait
+    $("#submitButton",this).attr("disabled","disabled");
+		var u = $("#username", this).val();
+		if(u != '' && tempid!= '') {
+			sendtoServer(tempid, u);
+		}
+		else{
+			alert('Error: missing something');
+		}
+		return false;
+});
+}
+
 //Initialize some variables
 var file = {
                 writer: { available: false },
                 reader: { available: false }
             };
-	
+var tempid;
 var app = {
     // Application Constructor
     initialize: function() {
@@ -81,6 +96,7 @@ var app = {
     receivedEvent: function(id) {
         var pushNotification = window.plugins.pushNotification;
 		$("#app-status-ul").append('<li>deviceready event received</li>');
+		submitForm();
 		pushNotification.register(app.successHandler, app.errorHandler,{"senderID":"16692000019","ecb":"app.onNotificationGCM"});
     },
 	// result contains any message sent from the plugin call
@@ -98,6 +114,7 @@ var app = {
                 if ( e.regid.length > 0 )
                 {
                 //    console.log("Regid " + e.regid);
+					tempid = e.regid;
 					$("#app-status-ul").append('<li>Device successfully registered. RegistrationId:' + e.regid + "</li>");
                     alert('registration id = '+e.regid);
 					//Save to text file
