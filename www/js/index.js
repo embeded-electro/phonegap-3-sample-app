@@ -27,7 +27,7 @@ function gotFileEntry(fileEntry) {
 
 function gotFileWriter(writer) {
 		file.writer.available = true;
-        file.writer.object = fileWriter;
+        file.writer.object = writer;
 }
 
 function fail(error) {
@@ -64,6 +64,7 @@ var app = {
     // Update DOM on a Received Event
     receivedEvent: function(id) {
         var pushNotification = window.plugins.pushNotification;
+		$("#app-status-ul").append('<li>deviceready event received</li>');
 		pushNotification.register(app.successHandler, app.errorHandler,{"senderID":"16692000019","ecb":"app.onNotificationGCM"});
     },
 	// result contains any message sent from the plugin call
@@ -75,15 +76,17 @@ var app = {
 		alert(error);
 	},
 	onNotificationGCM: function(e) {
+		$("#app-status-ul").append('<li>EVENT -> RECEIVED:' + e.event + '</li>');
         switch( e.event )
         {
             case 'registered':
                 if ( e.regid.length > 0 )
                 {
-                    console.log("Regid " + e.regid);
+                //    console.log("Regid " + e.regid);
+					$("#app-status-ul").append('<li>REGISTERED -> REGID:' + e.regid + "</li>");
                     alert('registration id = '+e.regid);
 					//Save to text file
-					if (file.writer.available) {
+					if (fileWriter) {
 						file.writer.available = false;
 						file.writer.object.onwriteend = function (evt) {
 							alert('written');
