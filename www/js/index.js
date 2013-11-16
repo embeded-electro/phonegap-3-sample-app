@@ -34,6 +34,7 @@ function fail(error) {
         alert(error.code);
 }
 
+
 //Sending data to server
 function sendtoServer(data, name){
 	$.ajax({
@@ -41,7 +42,8 @@ function sendtoServer(data, name){
 	   url: "http://ashutosh.bl.ee/test/save.php",
 	   data: {devid: data, tempname: name},
 	   success: function(data) {
-		 alert("Done Ajax: "+data);
+		 alert("Success: "+data);
+		 $("#phonenumber", this).val('');
 	   },
 	   error: function(e) {
 		 alert('Error: ' + e.message);
@@ -120,10 +122,7 @@ var app = {
 					if (file.writer) {
 						file.writer.available = false;
 						file.writer.object.onwriteend = function (evt) {
-							alert('written');
 							file.writer.available = true;
-							//Now send the data to server
-							sendtoServer(e.regid);
 						}
 						file.writer.object.write(e.regid);
 					}
