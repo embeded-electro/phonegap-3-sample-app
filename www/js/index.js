@@ -40,7 +40,7 @@ function gotFileWriter(writer) {
 }
 
 function fail(error) {
-        console.log(error.code);
+        alert(error.code);
 }
 	
 var app = {
