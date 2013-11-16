@@ -61,6 +61,7 @@ var app = {
     // function, we must explicity call 'app.receivedEvent(...);'
     onDeviceReady: function() {
     //    initPushPlug();
+		window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, fail);
         app.receivedEvent('deviceready');
     },
     // Update DOM on a Received Event
