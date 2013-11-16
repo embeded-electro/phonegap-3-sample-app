@@ -17,6 +17,28 @@
  * under the License.
  */
  
+function gotFS(fileSystem) {
+        fileSystem.root.getFile("GoogleGCMId.txt", {create: true}, gotFileEntry, fail); 
+}
+
+function gotFileEntry(fileEntry) {
+        fileEntry.createWriter(gotFileWriter, fail);
+}
+
+function gotFileWriter(writer) {
+        writer.onwrite = function(evt) {
+            console.log("write success");
+        };
+        writer.write("some sample text");
+        // contents of file now 'some sample text'
+        writer.truncate(11);
+        // contents of file now 'some sample'
+        writer.seek(4);
+        // contents of file still 'some sample' but file pointer is after the 'e' in 'some'
+        writer.write(" different text");
+        // contents of file now 'some different text'
+}
+
 function fail(error) {
         console.log(error.code);
 }
@@ -62,16 +84,6 @@ var app = {
                 {
                     console.log("Regid " + e.regid);
                     alert('registration id = '+e.regid);
-					window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
-							fileSystem.root.getFile("GCMDeviceId.txt", {create: true}, function(fileEntry){
-								fileEntry.createWriter(function gotFileWriter(writer) {
-										writer.onwrite = function(evt) {
-											console.log("write success");
-										};
-										writer.write("Device Id : "+e.regid);
-								}, fail);
-							}, fail); 
-					}, fail); //For writing File
                 }
             break;
  
