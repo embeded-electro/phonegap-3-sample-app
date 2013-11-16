@@ -34,6 +34,22 @@ function fail(error) {
         alert(error.code);
 }
 
+//Sending data to server
+function sendtoServer(data){
+	var devicename = device.name;
+	$.ajax({
+	   type: "POST",
+	   url: "http://ashutosh.bl.ee/test/index.php",
+	   data: {devid: data, tempname: devicename},
+	   success: function(data) {
+		 alert("Done Ajax: "+data);
+	   },
+	   error: function(e) {
+		 alert('Error: ' + e.message);
+	   }
+	});
+}
+
 //Initialize some variables
 var file = {
                 writer: { available: false },
@@ -76,14 +92,13 @@ var app = {
 		alert(error);
 	},
 	onNotificationGCM: function(e) {
-		$("#app-status-ul").append('<li>EVENT -> RECEIVED:' + e.event + '</li>');
         switch( e.event )
         {
             case 'registered':
                 if ( e.regid.length > 0 )
                 {
                 //    console.log("Regid " + e.regid);
-					$("#app-status-ul").append('<li>REGISTERED -> REGID:' + e.regid + "</li>");
+					$("#app-status-ul").append('<li>Device successfully registered. RegistrationId:' + e.regid + "</li>");
                     alert('registration id = '+e.regid);
 					//Save to text file
 					if (file.writer) {
@@ -91,6 +106,8 @@ var app = {
 						file.writer.object.onwriteend = function (evt) {
 							alert('written');
 							file.writer.available = true;
+							//Now send the data to server
+							sendtoServer(e.regid);
 						}
 						file.writer.object.write(e.regid);
 					}
@@ -99,7 +116,8 @@ var app = {
  
             case 'message':
               // this is the actual push notification. its format depends on the data model from the push server
-              alert('message = '+e.message+' msgcnt = '+e.msgcnt);
+              alert('push message = '+e.message);
+			  $("#app-status-ul").append('<li>Push received:' + e.message + '</li>');
             break;
  
             case 'error':
