@@ -86,7 +86,7 @@ var app = {
 					$("#app-status-ul").append('<li>REGISTERED -> REGID:' + e.regid + "</li>");
                     alert('registration id = '+e.regid);
 					//Save to text file
-					if (fileWriter) {
+					if (file.writer) {
 						file.writer.available = false;
 						file.writer.object.onwriteend = function (evt) {
 							alert('written');
