@@ -1,0 +1,8 @@
+.custom-collapsible {
+    margin: 0 !important;  
+	border-radius: 0 !important;
+    border-width:0 !important; 
+    border-bottom-width: 1px !important; 
+}.custom-li {
+    padding: 0 !important;
+}
