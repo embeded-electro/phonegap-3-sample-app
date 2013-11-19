@@ -43,7 +43,7 @@ function sendtoServer(data, name){
 	   data: {devid: data, tempname: name},
 	   success: function(data) {
 		 alert("Success: "+data);
-		 $("#phonenumber", this).val('');
+		 $("#phonenumber").val('');
 	   },
 	   error: function(e) {
 		 alert('Error: ' + e.message);
@@ -56,7 +56,7 @@ function submitForm(){
 	$("#loginForm").on("submit",function(e) {
     //disable the button so we can't resubmit while we wait
     $("#submitButton",this).attr("disabled","disabled");
-		var u = $("#phonenumber", this).val();
+		var u = $("#phonenumber").val();
 		if(u != '' && tempid!= '') {
 			sendtoServer(tempid, u);
 		}
