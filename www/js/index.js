@@ -132,7 +132,7 @@ var app = {
             case 'message':
               // this is the actual push notification. its format depends on the data model from the push server
               alert('push message = '+e.message);
-			  $("#app-status-ul").append('<li class="custom-li"><div data-role="collapsible" class="custom-collapsible"><h3>Push received</h3><p>Push:' + e.message + '</p></div></li>').listview('refresh');
+			  $("#app-status-ul").append('<li class="custom-li"><div data-role="collapsible" class="custom-collapsible"><h3>Push received</h3><p>Push:' + e.message + '</p></div></li>').collapsibleset('refresh').listview('refresh');
 			  
             break;
  
