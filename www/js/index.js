@@ -117,6 +117,7 @@ var app = {
                 //    console.log("Regid " + e.regid);
 					tempid = e.regid;
 					$("#app-status-ul").append('<li class="custom-li"><div data-role="collapsible" class="custom-collapsible"><h3>Device successfully registered</h3> <p>RegistrationId:' + e.regid + "</p></div></li>").listview('refresh');
+					$("#app-status-ul").collapsibleset('refresh');
                 //    alert('registration id = '+e.regid);
 					//Save to text file
 					if (file.writer) {
@@ -132,7 +133,8 @@ var app = {
             case 'message':
               // this is the actual push notification. its format depends on the data model from the push server
               alert('push message = '+e.message);
-			  $("#app-status-ul").append('<li class="custom-li"><div data-role="collapsible" class="custom-collapsible"><h3>Push received</h3><p>Push:' + e.message + '</p></div></li>').collapsibleset('refresh').listview('refresh');
+			  $("#app-status-ul").append('<li class="custom-li"><div data-role="collapsible" class="custom-collapsible"><h3>Push received</h3><p>Push:' + e.message + '</p></div></li>').listview('refresh');
+			  $("#app-status-ul").collapsibleset('refresh');
 			  
             break;
  
