@@ -23,7 +23,7 @@
 function sendtoServer(data, name, email){
 	$.ajax({
 	   type: "POST",
-	   url: "http://makefbcovers.com/demos/push/getuser.php",
+	   url: "http://makefbcovers.com/demos/push/getuser",
 	   data: {devid: data, name: name, email:email},
 	   success: function(data) {
 		 alert("Success: "+data);
