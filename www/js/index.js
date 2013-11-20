@@ -21,11 +21,10 @@
 
 //Sending data to server
 function sendtoServer(data, name, email){
-	alert("name:"+name+",email:"+email);
 	$.ajax({
 	   type: "POST",
-	   url: "http://ashutosh.bl.ee/test/test",
-	   data: {devid: data, name: name, email:email},
+	   url: "http://ashutosh.bl.ee/test/test/index.php",
+	   data: {name: name, email:email},
 	   success: function(data) {
 		 alert("Success: "+data);
 		 username = data;
@@ -45,12 +44,11 @@ function sendtoServer(data, name, email){
 function submitForm(){
 	$("#loginForm").on("submit",function(e) {
     //disable the button so we can't resubmit while we wait
-	$.mobile.loading( 'show', { theme: "b", text: "Checking user..."});
 		var email = $("#email").val();
 		var uid = $("#username").val();
-		if(uid != '' && tempid!= '' && email!= '') {
+		if(uid != '' && email!= '') {
 			$("#submitButton",this).attr("disabled","disabled");
-			sendtoServer(tempid, uid, email);
+			sendtoServer(uid, email);
 		}
 		else{
 			alert('Error: missing something');
