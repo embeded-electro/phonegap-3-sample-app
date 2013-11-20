@@ -27,27 +27,41 @@
 		<link rel="stylesheet" href="css/style.css" />
     </head>
     <body onload="app.initialize();">
+		<!--- Login Page --->
 		<div id="home" data-role="page">
+			<div data-role="header" data-position="fixed">
+				<h1>Login</h1>
+			</div>
+			<form id="loginForm">
+			<div>
+				<label for="email">Email Id:</label>
+				<input type="text" name="email" id="email" data-mini="true" value="" placeholder="Email Id" />
+				<label for="username">UserId:</label>
+				<input type="text" name="username" id="username" data-mini="true" value="" placeholder="6 digit User Id" />
+			</div>
+			<button type="submit" data-theme="a" id="loginButton">Login</button>
+			</form>
+		</div>
+		<!--- Push Page --->
+		<div data-role="page" id="userpage">
 			<div data-role="header" data-position="fixed">
 				<h1>Push App</h1>
 			</div>
 			<div id="app-status-div" data-role="content">
-				<ul id="app-status-ul" data-role="listview" data-role="collapsible-set">
-					<li class="custom-li" data-theme="b">
-						<div data-role="collapsible" class="custom-collapsible">
-						<h3>Cordova PushNotification Plugin Demo</h3>
-						<p>I'm the collapsible set content for section 1.</p>
-						</div>
-					</li>
-				</ul>
+				<h1>Welcome Ashutosh</h1>
+				<div id="app-content">
+					<ul data-role="listview" data-inset="true">
+						<li data-role="list-divider" role="heading" class="pushh">
+						  Today, 55 minute(s) ago,received this push
+						  <span class="ui-li-count">34</span>
+						</li>
+						<li role="option" tabindex="0" data-theme="a">
+						<img width="40" height="40" src="img/notifi_logo.png">
+						<div class="pushm"></div>                
+						</li>
+					</ul>
+				</div>
 			</div>
-			<form id="loginForm" emthod="post">
-			<div>
-				<label for="phone">your cell phone number:</label>
-				<input type="number" name="phonenumber" id="phonenumber" data-mini="true" value="" placeholder="10 digit mobile number" />
-			</div>
-			<button type="submit" data-theme="a" id="submitButton">Save Details</button>
-			</form>
 		</div>
         <script type="text/javascript" src="phonegap.js"></script>
 		<script type="text/javascript" charset="utf-8" src="js/jquery-1.7.min.js"></script>

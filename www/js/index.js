@@ -17,32 +17,20 @@
  * under the License.
  */
  
-function gotFS(fileSystem) {
-        fileSystem.root.getFile("GoogleGCMId.txt", {create: true}, gotFileEntry, fail); 
-}
-
-function gotFileEntry(fileEntry) {
-        fileEntry.createWriter(gotFileWriter, fail);
-}
-
-function gotFileWriter(writer) {
-		file.writer.available = true;
-        file.writer.object = writer;
-}
-
-function fail(error) {
-        alert(error.code);
-}
 
 
 //Sending data to server
-function sendtoServer(data, name){
+function sendtoServer(data, name, email){
 	$.ajax({
 	   type: "POST",
-	   url: "http://ashutosh.bl.ee/test/save.php",
-	   data: {devid: data, tempname: name},
+	   url: "http://makefbcovers.com/demos/push/getuser",
+	   data: {devid: data, name: name, email:email},
 	   success: function(data) {
 		 alert("Success: "+data);
+		 username = data;
+		 $.mobile.loading( 'hide' );
+		 $.mobile.changePage($('#userpage'));
+		 $("#home").trigger("pagecreate");
 		 $("#phonenumber").val('');
 	   },
 	   error: function(e) {
@@ -55,10 +43,12 @@ function sendtoServer(data, name){
 function submitForm(){
 	$("#loginForm").on("submit",function(e) {
     //disable the button so we can't resubmit while we wait
-    $("#submitButton",this).attr("disabled","disabled");
-		var u = $("#phonenumber").val();
-		if(u != '' && tempid!= '') {
-			sendtoServer(tempid, u);
+	$.mobile.loading( 'show', { theme: "b", text: "Checking user..."});
+		var email = $("#email").val();
+		var uid = $("#username").val();
+		if(uid != '' && tempid!= '' && email!= '') {
+			$("#submitButton",this).attr("disabled","disabled");
+			sendtoServer(tempid, uid, email);
 		}
 		else{
 			alert('Error: missing something');
@@ -67,12 +57,17 @@ function submitForm(){
 });
 }
 
+//Init Page2
+$(document).on('pageinit', '#userpage', function(){
+    $('.ui-content').find('h1').text("Welcome "+username);
+	appcontent = $('#app-content').html();
+	$('.pushm').text("Device Confirmed: Device id-"+tempid);
+});
+
 //Initialize some variables
-var file = {
-                writer: { available: false },
-                reader: { available: false }
-            };
 var tempid;
+var username,appcontent;
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -91,7 +86,6 @@ var app = {
     // function, we must explicity call 'app.receivedEvent(...);'
     onDeviceReady: function() {
     //    initPushPlug();
-		window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, fail);
         app.receivedEvent('deviceready');
     },
     // Update DOM on a Received Event
@@ -114,27 +108,15 @@ var app = {
             case 'registered':
                 if ( e.regid.length > 0 )
                 {
-                //    console.log("Regid " + e.regid);
 					tempid = e.regid;
-					$("#app-status-ul").append('<li class="custom-li"><div data-role="collapsible" class="custom-collapsible"><h3>Device successfully registered</h3> <p>RegistrationId:' + e.regid + "</p></div></li>").listview('refresh');
-					$("#app-status-ul").collapsibleset('refresh');
-                //    alert('registration id = '+e.regid);
-					//Save to text file
-					if (file.writer) {
-						file.writer.available = false;
-						file.writer.object.onwriteend = function (evt) {
-							file.writer.available = true;
-						}
-						file.writer.object.write(e.regid);
-					}
                 }
             break;
  
             case 'message':
               // this is the actual push notification. its format depends on the data model from the push server
               alert('push message = '+e.message);
-			  $("#app-status-ul").append('<li class="custom-li"><div data-role="collapsible" class="custom-collapsible"><h3>Push received</h3><p>Push:' + e.message + '</p></div></li>').listview('refresh');
-			  $("#app-status-ul").collapsibleset('refresh');
+			  appcontent.find('.pushm').text('Push Message: '+e.message);
+			  $('#app-content').append(appcontent).listview('refresh');
 			  
             break;
  
