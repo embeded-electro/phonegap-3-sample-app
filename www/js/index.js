@@ -33,8 +33,9 @@ function sendtoServer(data, name, email){
 		 $("#home").trigger("pagecreate");
 		 $("#phonenumber").val('');
 	   },
-	   error: function(e) {
-		 alert('Error: ' + e.message);
+	   error: function(xhr, ajaxOptions, thrownError) {
+		 alert(xhr.error);
+		 alert(thrownError);
 	   }
 	});
 }
