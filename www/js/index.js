@@ -34,7 +34,7 @@ function sendtoServer(data, name, email){
 		 $("#phonenumber").val('');
 	   },
 	   error: function(xhr, ajaxOptions, thrownError) {
-		 alert(xhr.error);
+		 alert(xhr.status);
 		 alert(thrownError);
 	   }
 	});
