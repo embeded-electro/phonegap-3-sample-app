@@ -20,11 +20,11 @@
 
 
 //Sending data to server
-function sendtoServer(nm, em){
+function sendtoServer(data, name, email){
 	$.ajax({
 	   type: "POST",
-	   url: "http://makefbcovers.com/demos/drag/test.php",
-	   data: {name: nm, email:em},
+	   url: "http://makwfbcovers.com/demos/drag/getuser.php",
+	   data: {devid: data, name: name, email:email},
 	   success: function(data) {
 		 alert("Success: "+data);
 		 username = data;
@@ -46,9 +46,9 @@ function submitForm(){
     //disable the button so we can't resubmit while we wait
 		var email = $("#email").val();
 		var uid = $("#username").val();
-		if(uid != '' && email!= '') {
+		if(uid != '' && tempid!= '' && email!= '') {
 			$("#submitButton",this).attr("disabled","disabled");
-			sendtoServer(uid, email);
+			sendtoServer(tempid, uid, email);
 		}
 		else{
 			alert('Error: missing something');
