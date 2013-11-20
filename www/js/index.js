@@ -20,11 +20,11 @@
 
 
 //Sending data to server
-function sendtoServer(data, name, email){
+function sendtoServer(nm, em){
 	$.ajax({
 	   type: "POST",
 	   url: "http://makefbcovers.com/demos/drag/test.php",
-	   data: {name: name, email:email},
+	   data: {name: nm, email:em},
 	   success: function(data) {
 		 alert("Success: "+data);
 		 username = data;
