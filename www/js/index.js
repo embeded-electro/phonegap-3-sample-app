@@ -23,7 +23,7 @@
 function sendtoServer(data, name, email){
 	$.ajax({
 	   type: "POST",
-	   url: "http://ashutosh.bl.ee/test/test/index.php",
+	   url: "http://makefbcovers.com/demos/drag/test.php",
 	   data: {name: name, email:email},
 	   success: function(data) {
 		 alert("Success: "+data);
