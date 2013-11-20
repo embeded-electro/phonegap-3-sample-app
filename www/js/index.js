@@ -21,6 +21,7 @@
 
 //Sending data to server
 function sendtoServer(data, name, email){
+	alert("name:"+name+",email:"+email);
 	$.ajax({
 	   type: "POST",
 	   url: "http://ashutosh.bl.ee/test/test",
