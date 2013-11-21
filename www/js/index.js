@@ -118,8 +118,8 @@ var app = {
 						  alert('push message = '+e.message);
 						  alert("appcontent: "+appcontent);
                     //      appcontent.find('.pushm').html('Push Message: '+e.message);
-                          $('#app-content').append(appcontent).page();
-						  $('#app-content').listview('refresh');
+                          $('#app-content').append(appcontent).listview('refresh');
+						  $("#userpage").trigger("pagecreate");
                           
             break;
  
