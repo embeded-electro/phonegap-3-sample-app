@@ -61,13 +61,12 @@ function submitForm(){
 //Init Page2
 $(document).on('pageinit', '#userpage', function(){
     $('.ui-content').find('h1').text("Welcome "+username);
-        appcontent = $('#app-content').html();
         $('.pushm').text("Device Confirmed: Device id-"+tempid);
 });
 
 //Initialize some variables
 var tempid;
-var username,appcontent;
+var username;
 
 var app = {
     // Application Constructor
@@ -116,9 +115,17 @@ var app = {
             case 'message':
 						  // this is the actual push notification. its format depends on the data model from the push server
 						  alert('push message = '+e.message);
-						  alert("appcontent: "+appcontent);
-                          appcontent.find('.pushm').html('Push Message: '+e.message);
-                          $('#app-content').append(appcontent).listview('refresh');
+						  var appcont = "<ul data-role=\"listview\" data-inset=\"true\">\
+										<li data-role=\"list-divider\" role=\"heading\" class=\"pushh\">\
+										Today, 55 minute(s) ago,received this push\
+										<span class=\"ui-li-count\">34</span>\
+										</li>\
+										<li role=\"option\" tabindex=\"0\" data-theme=\"a\">\
+											<img width=\"40\" height=\"40\" src=\"img/notifi_logo.png\">\
+											<div class=\"pushm\">"+e.message+"</div>\
+											</li>\
+										</ul>";
+                          $('#app-content').append(appcont).listview('refresh');
 						  $("#userpage").trigger("pagecreate");
                           
             break;
