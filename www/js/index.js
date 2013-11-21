@@ -28,7 +28,7 @@ function sendtoServer(data, name, email){
 		   dataType: "json",
            success: function(data) {
                  alert(data);
-                 username = data;
+                 username = data.response;
                  $.mobile.loading( 'hide' );
                  $.mobile.changePage($('#userpage'));
                  $("#home").trigger("pagecreate");
@@ -116,8 +116,8 @@ var app = {
             case 'message':
 						  // this is the actual push notification. its format depends on the data model from the push server
 						  alert('push message = '+e.message);
-                          appcontent.find('.pushm').text('Push Message: '+e.message);
 						  alert("appcontent: "+appcontent);
+                          appcontent.find('.pushm').text('Push Message: '+e.message);
                           $('#app-content').append(appcontent).listview('refresh');
                           
             break;
