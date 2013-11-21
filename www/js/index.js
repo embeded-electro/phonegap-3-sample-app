@@ -21,47 +21,48 @@
 
 //Sending data to server
 function sendtoServer(data, name, email){
-	$.ajax({
-	   type: "POST",
-	   url: "http://makefbcovers.com/demos/push/getuser",
-	   data: {devid: data, name: name, email:email},
-	   dataType: "json",
-	   success: function(data) {
-		 alert(data);
-		 username = data.name;
-		 $.mobile.loading( 'hide' );
-		 $.mobile.changePage($('#userpage'));
-		 $("#home").page();
-		 $("#phonenumber").val('');
-	   },
-	   error: function(xhr, ajaxOptions, thrownError) {
-		 alert(xhr.status);
-		 alert(thrownError);
-	   }
-	});
+        $.ajax({
+           type: "POST",
+           url: "http://makefbcovers.com/demos/push/getuser",
+           data: {devid: data, name: name, email:email},
+		   dataType: "json",
+           success: function(data) {
+                 alert(data);
+                 username = data;
+                 $.mobile.loading( 'hide' );
+                 $.mobile.changePage($('#userpage'));
+                 $("#home").trigger("pagecreate");
+                 $("#phonenumber").val('');
+           },
+           error: function(xhr, ajaxOptions, thrownError) {
+                 alert(xhr.status);
+                 alert(thrownError);
+           }
+        });
 }
 
 //Submit Form Example
 function submitForm(){
-	$("#loginForm").on("submit",function(e) {
+        $("#loginForm").on("submit",function(e) {
     //disable the button so we can't resubmit while we wait
-		var email = $("#email").val();
-		var uid = $("#username").val();
-		if(uid != '' && tempid!= '' && email!= '') {
-			$("#submitButton",this).attr("disabled","disabled");
-			sendtoServer(tempid, uid, email);
-		}
-		else{
-			alert('Error: missing something');
-		}
-		return false;
+                var email = $("#email").val();
+                var uid = $("#username").val();
+                if(uid != '' && tempid!= '' && email!= '') {
+                        $("#submitButton",this).attr("disabled","disabled");
+                        sendtoServer(tempid, uid, email);
+                }
+                else{
+                        alert('Error: missing something');
+                }
+                return false;
 });
 }
 
+//Init Page2
 $(document).on('pageinit', '#userpage', function(){
-				$('.ui-content').find('h1').text("Welcome "+username);
-				appcontent = $('#app-content').html();
-				$('.pushm').text("Device Confirmed: Device id-"+tempid);
+    $('.ui-content').find('h1').text("Welcome "+username);
+        appcontent = $('#app-content').html();
+        $('.pushm').text("Device Confirmed: Device id-"+tempid);
 });
 
 //Initialize some variables
@@ -91,36 +92,34 @@ var app = {
     // Update DOM on a Received Event
     receivedEvent: function(id) {
         var pushNotification = window.plugins.pushNotification;
-		submitForm();
-		pushNotification.register(app.successHandler, app.errorHandler,{"senderID":"16692000019","ecb":"app.onNotificationGCM"});
+                submitForm();
+                pushNotification.register(app.successHandler, app.errorHandler,{"senderID":"16692000019","ecb":"app.onNotificationGCM"});
     },
-	// result contains any message sent from the plugin call
-	successHandler: function(result) {
-		alert('Callback Success! Result = '+result)
-	},
-	//Any errors? 
-	errorHandler:function(error) {
-		alert(error);
-	},
-	onNotificationGCM: function(e) {
+        // result contains any message sent from the plugin call
+        successHandler: function(result) {
+                alert('Callback Success! Result = '+result)
+        },
+        //Any errors? 
+        errorHandler:function(error) {
+                alert(error);
+        },
+        onNotificationGCM: function(e) {
         switch( e.event )
         {
             case 'registered':
                 if ( e.regid.length > 0 )
                 {
-					tempid = e.regid;
+                                        tempid = e.regid;
                 }
             break;
  
             case 'message':
-              // this is the actual push notification. its format depends on the data model from the push server
-              alert('push message = '+e.message);
-			  //Init Page2
-			  appcontent.find('.pushm').text('Push Message: '+e.message);
-			  alert(appcontent);
-			  $('#app-content').append(appcontent).page();
-			  $('#app-content').listview('refresh', true)'
-			  
+						  // this is the actual push notification. its format depends on the data model from the push server
+						  alert('push message = '+e.message);
+                          appcontent.find('.pushm').text('Push Message: '+e.message);
+						  alert("appcontent: "+appcontent);
+                          $('#app-content').append(appcontent).listview('refresh');
+                          
             break;
  
             case 'error':
