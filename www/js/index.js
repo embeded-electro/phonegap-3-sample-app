@@ -25,7 +25,6 @@ function sendtoServer(data, name, email){
 	   type: "POST",
 	   url: "http://makefbcovers.com/demos/push/getuser",
 	   data: {devid: data, name: name, email:email},
-	   dataType: "json",
 	   success: function(data) {
 		 alert(data);
 		 username = data.name;
