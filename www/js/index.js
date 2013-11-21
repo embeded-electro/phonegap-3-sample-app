@@ -25,12 +25,13 @@ function sendtoServer(data, name, email){
 	   type: "POST",
 	   url: "http://makefbcovers.com/demos/push/getuser",
 	   data: {devid: data, name: name, email:email},
+	   dataType: "json",
 	   success: function(data) {
-		 alert("Success: "+data);
-		 username = data;
+		 alert(data);
+		 username = data.name;
 		 $.mobile.loading( 'hide' );
 		 $.mobile.changePage($('#userpage'));
-		 $("#home").trigger("pagecreate");
+		 $("#home").page();
 		 $("#phonenumber").val('');
 	   },
 	   error: function(xhr, ajaxOptions, thrownError) {
@@ -56,13 +57,6 @@ function submitForm(){
 		return false;
 });
 }
-
-//Init Page2
-$(document).on('pageinit', '#userpage', function(){
-    $('.ui-content').find('h1').text("Welcome "+username);
-	appcontent = $('#app-content').html();
-	$('.pushm').text("Device Confirmed: Device id-"+tempid);
-});
 
 //Initialize some variables
 var tempid;
@@ -92,6 +86,12 @@ var app = {
     receivedEvent: function(id) {
         var pushNotification = window.plugins.pushNotification;
 		submitForm();
+		$(document).on('pageinit', '#userpage', function(){
+				$('.ui-content').find('h1').text("Welcome "+username);
+				appcontent = $('#app-content').html();
+				$('.pushm').text("Device Confirmed: Device id-"+tempid);
+		});
+
 		pushNotification.register(app.successHandler, app.errorHandler,{"senderID":"16692000019","ecb":"app.onNotificationGCM"});
     },
 	// result contains any message sent from the plugin call
@@ -115,8 +115,11 @@ var app = {
             case 'message':
               // this is the actual push notification. its format depends on the data model from the push server
               alert('push message = '+e.message);
+			  //Init Page2
 			  appcontent.find('.pushm').text('Push Message: '+e.message);
-			  $('#app-content').append(appcontent).listview('refresh');
+			  alert(appcontent);
+			  $('#app-content').append(appcontent).page();
+			  $('#app-content').listview('refresh', true)'
 			  
             break;
  
