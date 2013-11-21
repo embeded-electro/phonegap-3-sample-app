@@ -28,9 +28,8 @@ function sendtoServer(data, name, email){
            data: {devid: data, name: name, email:email},
 		   dataType: "json",
            success: function(data) {
-                 alert(data);
 				 $.mobile.loading( 'hide' );
-				 if(data.response == 'true'){
+				 if(data.response){
 					username = data.name;
 					$.mobile.changePage($('#userpage'));
 					$("#home").trigger("pagecreate");
