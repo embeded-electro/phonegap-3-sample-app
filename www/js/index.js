@@ -23,15 +23,22 @@
 function sendtoServer(data, name, email){
         $.ajax({
            type: "POST",
+		   beforeSend: function(){ $.mobile.loading( 'show' ); },
            url: "http://makefbcovers.com/demos/push/getuser",
            data: {devid: data, name: name, email:email},
 		   dataType: "json",
            success: function(data) {
                  alert(data);
-                 username = data.response;
-                 $.mobile.loading( 'hide' );
-                 $.mobile.changePage($('#userpage'));
-                 $("#home").trigger("pagecreate");
+				 $.mobile.loading( 'hide' );
+				 if(data.response == 'true'){
+					username = data.name;
+					$.mobile.changePage($('#userpage'));
+					$("#home").trigger("pagecreate");
+				 }
+				 else{
+					alert('Could not find user!!!');
+					return false;
+				 }
                  $("#phonenumber").val('');
            },
            error: function(xhr, ajaxOptions, thrownError) {
@@ -129,7 +136,7 @@ var app = {
 						  var unique = uniqueData();
 						  $('<ul>').attr({'data-role':'listview','data-inset':'true','id':unique}).appendTo('#app-content');
 						  $('<li>').attr({'data-role':'list-divider','role':'heading','class':'pushh'}).append(txt+'<span class="ui-li-count">34</span>').appendTo('#'+unique);	
-						  $('<li>').attr({'tabindex':'0','role':'option','data-theme':'a'}).append(img+'<div class="pushm">'+e.message+'</div>').appendTo('#'+unique);
+						  $('<li>').attr({'tabindex':'0','role':'option','data-theme':'a'}).append(img+'<div class="pushm">Push Received: '+e.message+'</div>').appendTo('#'+unique);
 						  $('#'+unique).listview().listview('refresh');
 						  $("#userpage").trigger("pagecreate");
                           
