@@ -58,6 +58,15 @@ function submitForm(){
 });
 }
 
+function uniqueData(){
+			var text = "";
+			var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+			for( var i=0; i < 5; i++ )
+				text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+			return text;
+}
 //Init Page2
 $(document).on('pageinit', '#userpage', function(){
     $('.ui-content').find('h1').text("Welcome "+username);
@@ -115,18 +124,13 @@ var app = {
             case 'message':
 						  // this is the actual push notification. its format depends on the data model from the push server
 						  alert('push message = '+e.message);
-						  var appcont = "<ul data-role=\"listview\" data-inset=\"true\">\
-										<li data-role=\"list-divider\" role=\"heading\" class=\"pushh\">\
-										Today, 55 minute(s) ago,received this push\
-										<span class=\"ui-li-count\">34</span>\
-										</li>\
-										<li role=\"option\" tabindex=\"0\" data-theme=\"a\">\
-											<img width=\"40\" height=\"40\" src=\"img/notifi_logo.png\">\
-											<div class=\"pushm\">"+e.message+"</div>\
-											</li>\
-										</ul>";
-										
-                          $('#app-content').append(appcont).listview('refresh');
+						  var img = "<img width=\"40\" height=\"40\" src=\"img/notifi_logo.png\">";
+						  var txt = "Today, 55 minute(s) ago,received this push";
+						  var unique = uniqueData();
+						  $('<ul>').attr({'data-role':'listview','data-inset':'true','id':unique}).appendTo('#app-content');
+						  $('<li>').attr({'data-role':'list-divider','role':'heading','class':'pushh'}).append(txt+'<span class="ui-li-count">34</span>').appendTo('#'+unique);	
+						  $('<li>').attr({'tabindex':'0','role':'option','data-theme':'a'}).append(img+'<div class="pushm">'+e.message+'</div>').appendTo('#'+unique);
+						  $('#'+unique).listview().listview('refresh');
 						  $("#userpage").trigger("pagecreate");
                           
             break;
