@@ -117,8 +117,9 @@ var app = {
 						  // this is the actual push notification. its format depends on the data model from the push server
 						  alert('push message = '+e.message);
 						  alert("appcontent: "+appcontent);
-                          appcontent.find('.pushm').text('Push Message: '+e.message);
-                          $('#app-content').append(appcontent).listview('refresh');
+                    //      appcontent.find('.pushm').html('Push Message: '+e.message);
+                          $('#app-content').append(appcontent).page();
+						  $('#app-content').listview('refresh');
                           
             break;
  
