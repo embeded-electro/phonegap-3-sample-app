@@ -125,6 +125,7 @@ var app = {
 											<div class=\"pushm\">"+e.message+"</div>\
 											</li>\
 										</ul>";
+										
                           $('#app-content').append(appcont).listview('refresh');
 						  $("#userpage").trigger("pagecreate");
                           
