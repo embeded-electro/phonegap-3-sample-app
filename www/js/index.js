@@ -24,7 +24,7 @@ function sendtoServer(data, name, email){
         $.ajax({
            type: "POST",
 		   beforeSend: function(){ $.mobile.loading( 'show' ); },
-           url: "http://makefbcovers.com/demos/push/getuser",
+           url: "http://notifisolutions.com/demo/pushapp/index.php?/getuser",
            data: {devid: data, name: name, email:email},
 		   dataType: "json",
            success: function(data) {
